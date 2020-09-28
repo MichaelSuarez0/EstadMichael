@@ -1,24 +1,24 @@
 # EstadMichael
 # Reporte de metadata
 
-**Variable 1:** GDP/PBI
+**Variable 1:** GDP/PBI per capita
 
-_Descripción:_ Gross Domestic Product o Producto Bruto Interno en español). 
+_Descripción:_ Gross Domestic Product per capita o Producto Bruto Interno per capita
 177 observaciones (países a lo largo del mundo).
 
-_Tipo de escala:_ De razón (el 0 no indica ausencia
+_Tipo de escala:_ De razón
 
 _Tipo de variable:_ Cuantitativa continua
 
-_Justificación:_ La medición del PBI es importante
+_Justificación:_ La medición del PBI per capita es importante
 para nuestra investigación porque representa el nivel de desarrollo
 macroeconómico de un país. Este indicador forma parte de los factores económicos.
-
+_Source:_ https://data.worldbank.org/indicator/NY.GDP.PCAP.CD
 ...
 
 **Variable 2:** ICU beds per 100 000 population by country
 
-_Descripción:_ ICU (Intensive care units o Unidades de cuidados intensivos en español) por cada 100 000 habitantes.
+_Descripción:_ ICU (Intensive care units o Unidades de cuidados intensivos por cada 100 000 habitantes.
 181 observaciones (países a lo largo del mundo)
 
 _Tipo de escala:_ De intervalo (el 0 indica ausencia de camas)
@@ -30,3 +30,5 @@ la carencia de un número adecuado de camas UCI contribuye a la mortalidad por C
 En un nivel más abstracto, permite examinar
 el grado de atención de un país en el área de salud. Este indicador forma parte 
 de los factores técnicos
+
+_Source:_ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7194590/
