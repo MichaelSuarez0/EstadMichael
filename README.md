@@ -14,6 +14,7 @@ _Justificación:_ La medición del PBI per capita es importante
 para nuestra investigación porque representa el nivel de desarrollo
 macroeconómico de un país. Este indicador forma parte de los factores económicos.
 _Source:_ https://data.worldbank.org/indicator/NY.GDP.PCAP.CD
+
 ...
 
 **Variable 2:** ICU beds per 100 000 population by country
