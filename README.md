@@ -13,6 +13,7 @@ _Tipo de variable:_ Cuantitativa continua
 _Justificación:_ La medición del PBI per capita es importante
 para nuestra investigación porque representa el nivel de desarrollo
 macroeconómico de un país. Este indicador forma parte de los factores económicos.
+
 _Source:_ https://data.worldbank.org/indicator/NY.GDP.PCAP.CD
 
 ...
