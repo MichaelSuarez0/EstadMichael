@@ -2,14 +2,14 @@
 # Entregable 3
 
 **BASEFINAL.csv:** Base que contiene los países analizados (108), todas las variables independientes y la variable dependiente (mortalidad por cada 100 000 habitantes).
-**BASEFINAL.csv:**
+**RMDEntregable3:** Script que incluye el procedimiento para el análisis de variables.
 
 
 
 
 
 
-# # Entregable 2: Reporte de metadata
+# Entregable 2: Reporte de metadata
 
 **Variable 1:** GDP/PBI per capita
 
