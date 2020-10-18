@@ -1,0 +1,515 @@
+RMD TERCER ENTREGABLE- ESTADÍSTICA 2- TRABAJO GRUPAL
+Para ir directo al Tercer Entregable, adelantar a línea 74.
+
+
+PARTE PREVIA A TERCER ENTREGABLE
+
+Descarga de variable dependiente (mortalidad por países) y Merge final de las 5 bases de datos.
+
+Scrapping de tabla de datos "Cases and mortality by country" (Johns Hopkins) hasta el 10 de octubre 2020
+```{r}
+linkPage="https://coronavirus.jhu.edu/data/mortality"
+linkPath='//*[@id="root"]/div/div[2]/div/div/div/div/div[1]/div[2]/div[3]/div/table'
+library(htmltab)
+Mortality=htmltab(doc=linkPage,which=linkPath)
+Mortality[,c(2:4)]=NULL
+write.csv(Mortality,file="Mortality.csv",row.names = F)
+```
+
+MERGE 5 BASES DE DATOS
+```{r}
+names(adriana)=c("Country","Health Workers /10k 2017","UHC index 2017","UHC Ranking/Index 2017")
+adriana$'UHC Ranking/Index 2017'=NULL
+names(alvaro)=c("Country","Democracy Index Score 2019","Regime Type","Government Effectivenes Estimate 2019")
+names(michael)=c("Country","ICU Beds /100k 2019","GDP per capita 2019")
+names(isabel)=c("Country","Current Health Expenditure per GDP 2017","Unemployment % 2019")
+andrea[,c(3:6)]=NULL
+names(andrea)=c("Country","Corruption perception Index","Score- Prep. for sanitary crisis 2019")
+names(Mortality)=c("Country","Deaths /100k until 10/10/20")
+```
+Merge
+```{r}
+a=merge(isabel,andrea,all.x = T,all.y = T)
+b=merge(a,michael,all.x = T,all.y = T)
+c=merge(b,alvaro,all.x = T,all.y = T)
+d=merge(c,adriana,all.x = T,all.y = T)
+e=merge(d,Mortality,all.x = T,all.y = T)
+
+#Para evitar perder países, se completaron datos con información proveniente de internet
+e[5,6]=0.8
+e[5,7]=3432.39 
+e[8,6]=5.2
+e[8.7]=4212.07
+e[11,6]=4.7
+e[11,7]=4721.18
+e[49,6]=5.3
+e[49,7]=8821.82 
+e[124,13]=0
+e[132,6]=32.2
+e[132,7]=53024.06
+e[116,4]=52
+e[116,5]=21
+e[108,4]=40
+e[108,5]=57
+e[81,4]=25
+e[81,5]=65
+e[39,11]=316
+e[39,12]=79
+
+e[!complete.cases(e),]
+e=e[complete.cases(e),]
+BaseFinal=e
+write.csv(BaseFinal,"baseFinal.csv",row.names = F)
+```
+
+Ultimos detalles de limpieza y reordenar
+```{r}
+names(baseFinal)
+names(baseFinal)=c("Country","Current Health Expenditure per GDP 2017","Unemployment 2019","Corruption Perception Index","Score Prep. for sanitary crisis 2019","ICU Beds /100k 2019","GDP per capita 2019","Regime Type","Government Effectivenes Est. 2019","Heath Workers /10k 2017","UHC index 2017","Deaths /100k until 10/10/20","Score")
+#reordenar columnas
+baseFinal <- baseFinal[, c(1,2,3,4,5,13,6,7,8,9,10,11,12)]
+write.csv(baseFinal,"baseFinal.csv",row.names = F)
+```
+
+TERCER ENTREGABLE
+
+EXPORTAMOS LA DATA FINAL DE GITHUB
+```{r}
+library(rio)
+library(stringr)
+library(readr)
+basefinal="https://raw.githubusercontent.com/MichaelSuarez0/EstadMichael/master/BASEFINAL.csv"
+data=import(basefinal)
+```
+
+SCRIPTS DEL TERCER ENTREGABLE
+Librerías
+```{r}
+library(car)
+library(rio)
+library(DescTools)
+library(descr)
+library(ggplot2)
+library(gplots)
+library(dplyr)
+library(foreign)
+library(haven)
+library(tidyverse)
+library(psych)
+library(Rmisc)
+library(onewaytests)
+library(vcd)
+library(ggstance)
+library(jtools)
+library(stargazer)
+library(sp)
+library(geojsonio)
+library(rgdal)
+library(htmltab) 
+library(stringr)
+library(readr)
+library(magrittr)
+library(margins)
+library(InformationValue)
+library(pander)
+library(lmtest)
+library(knitr)
+library(kableExtra)
+library(polycor)
+library(ggcorrplot)
+library(matrixcalc)
+library(GPArotation)
+library(plotly)
+library(cluster)
+library(factoextra)
+library(plyr)
+library(jsonlite)
+library(readr)
+library(magrittr)
+library(lavaan)
+library(rio)
+library(cluster)
+library(plyr)
+library(psych) 
+library(kableExtra) 
+library(factoextra) 
+library(ggrepel) 
+library(htmltab)
+library(dplyr)
+library(dbscan)
+library(fpc)
+```
+
+ADRIANA
+
+ANÁLISIS UNIVARIADO
+Variable 1: HealthWorkers /10k 2017
+```{r}
+data$hw=data$`Heath Workers /10k 2017`
+str(data$hw)
+table(data$hw)
+
+#Tendencia central
+summary(data$hw)
+mode(data$hw) 
+median(data$hw)
+mean(data$hw)
+sd(data$hw)
+var(data$hw)
+boxplot(data$hw,main="Distribución de trabajadores en el 
+        Sector Salud en 106 países del mundo - 2017", xlab="País", ylab="Número",col="yellow")
+plot(data$hw,main="Dispersión de trabajadores en el Sector Salud
+     en 106 países del mundo - 2017",col="blue",xlab="País",ylab="Número")
+t.test(data$hw)
+```
+
+Variable 2: UHC 
+```{r}
+data$uhc=data$`UHC index 2017`
+str(data$uhc)
+
+#Tendencia central 
+summary(data$uhc)
+table(data$uhc)
+mode(data$uhc) 
+median(data$uhc)
+mean(data$uhc)
+sd(data$uhc)
+var(data$uhc)
+boxplot(data$uhc,main="Distribución de índice de UHC en 
+        106 países del mundo - 2017",col="orange",xlab="País",ylab="UHC")
+plot(data$uhc, main="Dispersión de índice de UHC en 
+        106 países del mundo - 2017",col="orange",xlab="País",ylab="UHC")
+t.test(data$uhc)
+```
+
+ANÁLISIS BIVARIADO
+Variable dependiente: mortalidad por cada 100 mil habitantes hasta el 10/10/2020
+```{r}
+data$mort=data$`Deaths /100k until 10/10/20`
+str(data$mort)
+#variable numérica
+```
+
+Trabajadores de salud y Mortalidad (2 numéricas--> correlación)
+```{r}
+#Asociación entre las dos variables
+plot(data$hw,data$mort,main="Diagrama de dispersión HW/Mortalidad",xlab="Trabajadores de salud",ylab="Mortalidad por cada 100mil",col="red")
+#hay una concentración de datos en la esquina inferior izquierda, correlación positiva
+cor.test(data$mort,data$hw)
+#pvalue=0.03 sí hay correlación
+#cor= 0.203  relación directamente proporcional, fuerza baja
+
+#Regresión
+modelo1=lm(data$mort~data$hw)
+summary(modelo1)
+#pvalue=0.036 modelo sí es válido
+#La Densidad explica en un 3.2% la variación de la mortalidad en los países
+#Ecuación:    y=10.87+0.018x
+linea=predict(modelo1)
+ggplot(data,aes(hw,mort))+geom_point()+theme_bw()+geom_line(aes(y=linea),color="red")
+```
+
+UHC y Mortalidad (2 numéricas--> correlación)
+```{r}
+#Asociación entre las dos variables
+plot(data$uhc,data$mort,main="Diagrama de dispersión UHC/Mortalidad",xlab="índice UHC",ylab="Mortalidad por cada 100mil",col="red")
+#hay una concentración de datos en la esquina inferior derecha, correlación positiva
+cor.test(data$mort,data$uhc)
+#pvalue=2.076e-05 sí correlación 
+#cor= 0.4 relación directamente proporcional, fuerza media
+
+#Regresión
+modelo2=lm(data$mort~data$uhc)
+summary(modelo2)
+#pvalue= 2.076e-05 modelo sí es válido
+#El UHC explica en un 15.2% la variación de la mortalidad en los países
+#Ecuación:    y=-23.44+0.57x
+linea=predict(modelo2)
+ggplot(data,aes(uhc,mort))+geom_point()+theme_bw()+geom_line(aes(y=linea),color="red")
+```
+
+ISABEL
+
+ANÁLISIS UNIVARIADO
+Variable 1: Gasto en salud
+```{r}
+summary(data)
+summary(data$`Current Health Expenditure per GDP 2017`)
+range(data$`Current Health Expenditure per GDP 2017`)
+sd(data$`Current Health Expenditure per GDP 2017`)
+library(DescTools)
+Mode(data$`Current Health Expenditure per GDP 2017`)
+var(data$`Current Health Expenditure per GDP 2017`)
+hist(data$`Current Health Expenditure per GDP 2017`)
+t.test(data$`Current Health Expenditure per GDP 2017`)
+boxplot(data$`Current Health Expenditure per GDP 2017`, main="Current Health Expenditure per GDP 2017",
+   xlab="Countries", ylab="Health Expenditure per GDP", col = "Pink")
+plot(data$`Current Health Expenditure per GDP 2017`, main="Dispersion of Current Health Expenditure per GDP 2017",
+   xlab="Number of Countries", ylab="Health Expenditure per GDP", col="coral")
+
+```
+
+Variable 2: Desempleo
+```{r}
+summary(data$`Unemployment 2019`)
+range(data$`Unemployment 2019`)
+sd(data$`Unemployment 2019`)
+mode(data$`Unemployment 2019`)
+var(data$`Unemployment 2019`)
+hist(data$`Unemployment 2019`)
+t.test(data$`Unemployment 2019`)
+boxplot(data$`Unemployment 2019`, main="Unemployment % 2019",
+   xlab="Countries", ylab="Unemployment rate", col = "coral1")
+plot(data$`Unemployment 2019`, main="Dispersion of Unemployment % 2019",
+   xlab="Number of Countries", ylab="Unemployment rate", col="coral2")
+```
+
+ANÁLISIS BIVARIADO
+
+Relación entre Gasto en salud 2017 y Mortalidad 2020
+```{r}
+library(csvy)
+
+plot(data$`Current Health Expenditure per GDP 2017`,data$mort, main="Diagrama de dispersion Gasto en salud/Mortalidad",
+   xlab="Gasto en salud/GDP", ylab="Mortalidad por cada 100mil", col="coral2")
+
+
+modelo3=lm(data$`Current Health Expenditure per GDP 2017`~data$mort)
+summary(modelo3)
+```
+
+Relación entre Tasa de desempleo 2019 y Mortalidad 2020
+```{r}
+plot(data$`Unemployment 2019`,data$mort, main="Diagrama de dispersion Tasad de desempleo/Mortalidad",
+   xlab="Tasa de desempleo", ylab="Mortalidad por cada 100mil", col="coral")
+
+modelo4=lm(data$`Unemployment 2019`~data$mort)
+summary(modelo4)
+```
+
+
+ANDREA
+ANALISIS UNIVARIADO
+Variable 1: Indice de corrupcion
+```{r}
+colnames(data)[colnames(data)=="Corruption Perception Index"] <- "corrup"
+
+#Estructura de la variable
+str(data$corrup)
+class(data$corrup)
+
+#Medidas de tendencia central
+median (data$corrup)
+mean(data$corrup)
+summary(data$corrup)
+
+#Medidas de dispersion
+sd(data$corrup) #desviacion standar
+var(data$corrup) #varianza
+max(data$corrup)
+min(data$corrup)
+rango1=max(data$corrup)-min(data$corrup) #rango
+rango1
+
+quantile((data$corrup),probs=c(0, 0.25, 0.5, 0.75, 1)) #cuartiles
+
+#Graficos
+hist(data$corrup, main="Indice de corrupcion", col="blue", 
+     xlab="puntaje", ylab="paises")
+boxplot(data$corrup, main="Indice de corrupcion", col="blue")
+plot(data$corrup, main="Indice de corrupcion", col="blue")
+
+t.test(data$corrup)
+
+```
+
+Variable 2: Preparacion para la crisis sanitaria
+```{r}
+data$`Score Prep. for sanitary crisis 2019`=as.numeric(data$`Score Prep. for sanitary crisis 2019`)
+
+#Estructura de la variable
+str(data$`Score Prep. for sanitary crisis 2019`)
+class(data$`Score Prep. for sanitary crisis 2019`)
+
+#Medidas de detendencia central
+median (data$`Score Prep. for sanitary crisis 2019`)
+mean(data$`Score Prep. for sanitary crisis 2019`)
+summary(data$`Score Prep. for sanitary crisis 2019`)
+
+#Medidas de dispersion
+sd(data$`Score Prep. for sanitary crisis 2019`) #desviacion standar
+var(data$`Score Prep. for sanitary crisis 2019`) #varianza
+max(data$`Score Prep. for sanitary crisis 2019`)
+min(data$`Score Prep. for sanitary crisis 2019`)
+rango2=max(data$`Score Prep. for sanitary crisis 2019`)-min(data$`Score Prep. for sanitary crisis 2019`) #rango
+rango2
+
+quantile((data$`Score Prep. for sanitary crisis 2019`),probs=c(0, 0.25, 0.5, 0.75, 1)) #cuartiles
+
+#Graficos
+hist(data$`Score Prep. for sanitary crisis 2019`, main="`Score Prep. for sanitary crisis 2019`aracion para crisis sanitaria", col="red", 
+     xlab="puntaje", ylab="paises")
+boxplot(data$`Score Prep. for sanitary crisis 2019`, main="`Score Prep. for sanitary crisis 2019`aracion para crisis sanitaria", col="red")
+plot(data$`Score Prep. for sanitary crisis 2019`, main="`Score Prep. for sanitary crisis 2019`aracion para crisis sanitaria", col="red")
+
+t.test(data$`Score Prep. for sanitary crisis 2019`)
+
+```
+
+ANALISIS BIVARIADO
+INDICE DE CORRUPCION (2019) Y MORTALIDAD
+```{r}
+library(psych)
+str(data$mort)
+
+#Analisis visual
+plot(data$mort, data$corrup, main="Indice de corrupcion", col="blue")
+
+#R de Pearson
+##HO: Las variables son estadísticamente independiente -> no se rechaza
+##Correlacion directa baja 
+cor.test(data$mort, data$corrup)
+
+#Regresion lineal simple
+modelo5 = lm(data$mort ~ data$corrup)
+summary(modelo5)
+modelo5
+
+colnames(data)[colnames(data)=="corrup"] <- "Corruption perception Index"
+```
+
+SCORE DE PREPARACION ANTE UNA CRISIS SANITARIA (2019) Y MORTALIDAD
+```{r}
+#Analisis visual
+plot(data$mort, data$`Score Prep. for sanitary crisis 2019`, main="Preparacion para crisis sanitaria", col="red")
+
+#R de Pearson
+##HO: Las variables son estadísticamente independiente -> se rechaza
+##Correlacion directa y baja
+cor.test(data$mort, data$`Score Prep. for sanitary crisis 2019`)
+
+#Regresion simple
+modelo6 = lm(data$mort ~ data$`Score Prep. for sanitary crisis 2019`)
+summary(modelo6)
+modelo6
+```
+
+ALVARO
+Analisis univariado: estadisticos descriptivos de Score, Regime Type y Government Effectivenes Est. 2019
+```{r}
+#Variable Score
+Mode(data$Score)
+describeBy(data$Score)
+t.test(data$Score)
+
+#Variable Regime.Type
+Mode(data$`Regime Type`)
+
+#Variable Estimate 2019
+summary(data$`Government Effectivenes Est. 2019`)
+Mode(data$`Government Effectivenes Est. 2019`)
+t.test(data$`Government Effectivenes Est. 2019`)
+
+#Graficos descriptivos
+boxplot(data$Score, main="Puntaje del indice de democracia por pais", xlab="Pais", ylab="Puntaje", col = "Green")
+plot(data$Score, main="Puntaje del indice de democracia por pais", xlab="Pais", ylab="Puntaje")
+
+boxplot(data$`Government Effectivenes Est. 2019`, main = "Indice de gobernanza estimado por pais", xlab = "Pais", ylab = "Indice de gobernanza estimado")
+plot(data$`Government Effectivenes Est. 2019`, main = "Indice de gobernanza estimado por pais", xlab = "Pais", ylab = "Indice de gobernanza estimado")
+```
+
+Analisis bivariado: correlaciones entre ambas variables y la tasa de mortalidad en 2020.
+```{r}
+#Analisis bivariado
+library(jtools)
+
+#Muertes-democracia
+str(data$mort)
+str(data$Score)
+
+modelo7=lm(data$mort~data$Score)
+
+summ(modelo7)
+
+cor.test(data$Score, data$mort)
+
+plot(data$Score, data$mort, main = "Correlacion entre indice de democracia y tasa de mortalidad", xlab = "Puntaje en el indice de democracia", ylab = "Muertes por cada 100 000 habitantes")
+
+#Muertes-gobernanza
+t.test(data$mort, data$`Government Effectivenes Est. 2019`)
+modelo8=lm(data$mort~data$`Government Effectivenes Est. 2019`)
+
+summ(modelo8)
+
+plot(data$`Government Effectivenes Est. 2019`, data$mort, xlab = "Indice de efectividad de gobernanza (estimado)", ylab = "Muertos por cada 100 000 habitantes")
+```
+
+
+MICHAEL
+Análisis univariado de ICU Beds y GDP per capita
+```{r}
+
+summary(data$`ICU Beds /100k 2019`)
+summary(data$`GDP per capita 2019`)
+sd(data$`ICU Beds /100k 2019`, na.rm=F)
+range(data$`ICU Beds /100k 2019`)
+range(data$`GDP per capita 2019`)
+t.test(data$`GDP per capita 2019`, conf.level = 0.95)
+t.test(data$`ICU Beds /100k 2019`, conf.level = 0.95)
+```
+
+Analisis bivariado
+```{r}
+boxplot(data$`GDP per capita 2019`, main="Boxplot de GDP per capita", col="salmon",
+        xlab="Países", ylab="GDP per capita")  # sesgo a la derecha #
+
+plot(data$`GDP per capita 2019`, ylab='GDP per capita',
+     xlab='Países', col="red", main="Diagrama de dispersión GDP per capita")
+```
+```{r}
+boxplot(data$`ICU Beds /100k 2019`, main="Boxplot ICU Beds per 100 000 population", col="salmon",
+        xlab="Países", ylab="ICU Beds")  # sesgo a la derecha #
+
+plot(data$`ICU Beds /100k 2019`, ylab='ICU Beds',
+     xlab='Países', col="red", main="Diagrama de dispersión ICU Beds per 100 000 population")
+```
+
+```{r}
+
+#Regresiones lineales#
+modelo9 <- lm(data$`Deaths /100k until 10/10/20` ~ data$`ICU Beds /100k 2019`)
+summary(modelo9)
+summary.aov(modelo9)
+#p value mayor a 0.05. No hay diferencias significativas
+modelo10 <- lm(data$`Deaths /100k until 10/10/20` ~ data$`GDP per capita 2019`)
+summary(modelo10)
+summary.aov(modelo10)
+
+```
+
+```{r}
+# Diagrama de correlación bivariada
+plot(data$`GDP per capita 2019`, data$`Deaths /100k until 10/10/20`, ylab='Mortalidad por 100 000 habitantes',
+     xlab='GDP per capita', col="red", main="Diagrama de dispersión GDP/Mortalidad")
+
+plot(data$`ICU Beds /100k 2019`, data$`Deaths /100k until 10/10/20`, ylab='Mortalidad por 100 000 habitantes',
+     xlab='ICU Beds', col="red", main="Diagrama de dispersión ICU Beds/Mortalidad")
+
+summary(data$`GDP per capita 2019`)
+summary(data$`ICU Beds /100k 2019`)
+
+```
+
+```{r}
+library(ggplot2)
+ggplot(data, aes(`Deaths /100k until 10/10/20`, `GDP per capita 2019`)) + geom_point() + theme_bw() + geom_line(aes(y=linea), color = "red")
+
+cor.test(data$`Deaths /100k until 10/10/20`, data$`GDP per capita 2019`)
+cor.test(data$`Deaths /100k until 10/10/20`, data$`ICU Beds /100k 2019`)
+
+modelo9
+summary(modelo9)
+# Observar R ajustado
+0.24 + 0.006*90
+```
