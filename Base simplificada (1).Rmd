@@ -1,0 +1,15 @@
+
+
+Guardar base de datos con nombres simplificados
+
+```{r}
+library(rio)
+link="https://github.com/MichaelSuarez0/EstadMichael/raw/master/BasedeDatosFinal.csv"
+BasedeDatosFinal=import(link)
+```
+
+```{r}
+names(BasedeDatosFinal)=c("Country","CHEGDP","Unemployment","Corruption","PrepSanitary","Score","ICUbeds","GDPcapita","Regimetype","Democracy","HW","UHC","Deaths")
+
+write.csv(BasedeDatosFinal, "CountrysCOVID19.csv", row.names=F)
+```
